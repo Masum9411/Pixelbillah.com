@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Portfolio Slider</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+body { background:#0f0f0f; color:#fff; overflow:hidden; }
+
+/* Slider container */
+.slider { position:relative; width:100%; height:100vh; }
+
+/* Each slide stacked absolutely */
+.slide {
+  position:absolute; top:0; left:0;
+  width:100%; height:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:40px;
+  opacity:0; transition:opacity 1s ease;
+  pointer-events:none;
+}
+
+/* Active slide visible */
+.slide.active { opacity:1; pointer-events:auto; }
+
+/* Slide backgrounds */
+.slide1 { background: linear-gradient(135deg, #1e1e2f, #0f0f0f); }
+.slide2 { background: linear-gradient(135deg, #004d7a, #008793, #00bf72, #a8eb12); }
+.slide3 { background: linear-gradient(135deg, #ff512f, #dd2476); }
+.slide4 { background: linear-gradient(135deg, #654ea3, #eaafc8); }
+
+/* Text Fade-up Animation */
+.fade-up {
+  opacity:0;
+  transform: translateY(20px);
+  animation:fadeUp 0.8s forwards;
+}
+
+@keyframes fadeUp {
+  to { opacity:1; transform: translateY(0); }
+}
+
+/* Headings and list styling */
+h1 { font-size:3rem; margin-bottom:20px; }
+h2 { font-size:2rem; margin-bottom:15px; color:#00ffcc; }
+ul { list-style:none; font-size:1.2rem; line-height:1.8; color:#ddd; padding:0; margin:0; }
+ul li { margin:5px 0; }
+
+/* Controls */
+.controls { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); display:flex; gap:10px; z-index:10; }
+.dot { width:12px; height:12px; border-radius:50%; background:#fff; opacity:0.5; cursor:pointer; transition:0.3s; }
+.dot.active { opacity:1; background:#00ffcc; }
+
+/* Arrows */
+.arrow { position:absolute; top:50%; transform:translateY(-50%); font-size:2rem; color:#fff; cursor:pointer; opacity:0.7; transition:0.3s; z-index:10; user-select:none; }
+.arrow:hover { opacity:1; }
+.arrow-left { left:20px; }
+.arrow-right { right:20px; }
+
+/* Floating shapes */
+.shape { position:absolute; border-radius:50%; opacity:0.4; animation:float 6s infinite ease-in-out; z-index:1; }
+.shape1 { width:80px; height:80px; background:#ff4ecd; top:20%; left:10%; }
+.shape2 { width:100px; height:100px; background:#00ffcc; bottom:15%; right:10%; animation-delay:2s; }
+.shape3 { width:60px; height:60px; background:#ffaa00; top:70%; left:20%; animation-delay:4s; }
+
+@keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-20px); } }
+</style>
+</head>
+<body>
+
+<div class="slider">
+  <!-- Slide 1: Welcome -->
+  <div class="slide slide1 active"></div>
+
+  <!-- Slide 2: Graphic Design -->
+  <div class="slide slide2"></div>
+
+  <!-- Slide 3: Video Editing -->
+  <div class="slide slide3"></div>
+
+  <!-- Slide 4: Motion Graphics -->
+  <div class="slide slide4"></div>
+
+  <!-- Arrows -->
+  <div class="arrow arrow-left" onclick="prevSlide()">&#10094;</div>
+  <div class="arrow arrow-right" onclick="nextSlide()">&#10095;</div>
+
+  <!-- Dots -->
+  <div class="controls">
+    <div class="dot active" onclick="goToSlide(0)"></div>
+    <div class="dot" onclick="goToSlide(1)"></div>
+    <div class="dot" onclick="goToSlide(2)"></div>
+    <div class="dot" onclick="goToSlide(3)"></div>
+  </div>
+
+  <!-- Floating Shapes -->
+  <div class="shape shape1"></div>
+  <div class="shape shape2"></div>
+  <div class="shape shape3"></div>
+</div>
+
+<script>
+// Slide content
+const slideContents = [
+  [
+    "Welcome to PixelBillah",
+    "Graphic Design | Video Editing | Motion Graphics",
+    ["Explore my professional services that bring ideas to life with design, storytelling, and animation."]
+  ],
+  [
+    "Graphic Design Services",
+    null,
+    ["T-Shirt & Merchandise", "Flyer Design", "Poster Design", "Social Media Ads", "Website Covers"]
+  ],
+  [
+    "Video Editing Services",
+    null,
+    ["Storytelling & Creative Edits", "Advertisement & Promotional Editing", "Corporate & Professional Editing", "Social Media Editing", "Event & Personal Video Editing"]
+  ],
+  [
+    "Motion Graphics Services",
+    null,
+    ["Logo Animation", "Animated Explainer Videos", "YouTube Intros & Outros", "Lower Thirds & Titles", "Kinetic Typography", "Product Promo Animations", "Infographic & Data Animations", "Social Media Motion Graphics", "Event/Corporate Presentation Graphics", "Transitions & VFX Packs"]
+  ]
+];
+
+// Get slide elements
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.dot');
+let currentIndex = 0;
+
+// Function to animate slide text
+function animateSlide(slide, content){
+  slide.innerHTML = "";
+
+  // Heading
+  const h1 = document.createElement('h1');
+  h1.textContent = content[0];
+  h1.classList.add('fade-up');
+  h1.style.animationDelay = '0s';
+  slide.appendChild(h1);
+
+  // Subtitle
+  if(content[1]){
+    const h2 = document.createElement('h2');
+    h2.textContent = content[1];
+    h2.classList.add('fade-up');
+    h2.style.animationDelay = '0.3s';
+    slide.appendChild(h2);
+  }
+
+  // List items
+  const ul = document.createElement('ul');
+  content[2].forEach((item, i)=>{
+    const li = document.createElement('li');
+    li.textContent = item;
+    li.classList.add('fade-up');
+    li.style.animationDelay = `${0.5 + i*0.2}s`;
+    ul.appendChild(li);
+  });
+  slide.appendChild(ul);
+}
+
+// Show slide
+function showSlide(index){
+  slides.forEach((slide,i)=>{
+    slide.classList.remove('active');
+  });
+  slides[index].classList.add('active');
+  dots.forEach((dot,i)=> dot.classList.toggle('active', i===index));
+
+  // Animate text of current slide
+  animateSlide(slides[index], slideContents[index]);
+  currentIndex = index;
+}
+
+// Next / Previous
+function nextSlide(){ showSlide((currentIndex+1)%slides.length); }
+function prevSlide(){ showSlide((currentIndex-1+slides.length)%slides.length); }
+function goToSlide(index){ showSlide(index); }
+
+// Auto slide
+setInterval(nextSlide,7000);
+
+// Initialize first slide
+showSlide(0);
+</script>
+
+</body>
+</html>
